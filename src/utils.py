@@ -38,7 +38,7 @@ client = Minio(
 
 def save_data_as_json(data):
     file_name = str(uuid.uuid4()) + ".json"
-    with open(f"./tasks/{file_name}", "w", encoding="utf-8") as f:
+    with open(os.path.join(config.TASKS_DIR, file_name), "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
 
