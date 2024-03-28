@@ -26,5 +26,5 @@ def detect_run():
         _detect_media(task)
         count += 1
         if datetime.datetime.now() > stop_at:
-            return
+            break
     return count
