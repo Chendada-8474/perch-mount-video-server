@@ -1,6 +1,8 @@
 import base64
 import flask
 
+from src import utils
+
 app = flask.Flask(__name__)
 
 
@@ -13,6 +15,13 @@ def video(base32_path: str):
         return flask.send_file(path)
     except:
         return flask.jsonify({"message": "video not found"}, 404)
+
+
+@app.route("/delete_media", methods=["POST"])
+def post_task():
+    task = flask.request.get_json()
+    utils.save_data_as_json(task)
+    return flask.jsonify({"message": "task saved"})
 
 
 if __name__ == "__main__":
