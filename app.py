@@ -6,7 +6,7 @@ from src import utils
 app = flask.Flask(__name__)
 
 
-@app.route("/<string:base32_path>", methods=["GET"])
+@app.route("/video/<string:base32_path>", methods=["GET"])
 def video(base32_path: str):
     try:
         path = base32_path.encode("utf-8")
