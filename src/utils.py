@@ -11,6 +11,7 @@ from src import config
 
 
 DETECTE_RUN_DURATION = 2
+TODAY = datetime.datetime.now().strftime("YYYY-MM-DD")
 
 
 class Hierarchy:
@@ -43,6 +44,11 @@ def save_data_as_json(data):
         json.dump(data, f, indent=4)
 
 
+def make_empty_dir():
+    dir_path = os.path.join(config.EMPTY_MEDIA_DIR, TODAY)
+    pathlib.Path(dir_path).mkdir(parents=True, exist_ok=True)
+
+
 def read_task(path: str) -> dict:
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -59,6 +65,7 @@ def _detect_media(media: list[dict]):
 
     for medium in tqdm.tqdm(media):
         hierarchy = _get_hierarchy(medium["path"])
+
         objects.append(
             os.path.join(
                 hierarchy.project,
@@ -71,9 +78,7 @@ def _detect_media(media: list[dict]):
         try:
             shutil.move(
                 medium["path"],
-                os.path.join(
-                    config.EMPTY_MEDIA_DIR, hierarchy.check_date, hierarchy.file_name
-                ),
+                os.path.join(config.EMPTY_MEDIA_DIR, TODAY, hierarchy.file_name),
             )
         except Exception as e:
             logging.error(e)
@@ -84,6 +89,7 @@ def _detect_media(media: list[dict]):
 
 
 def delete_run():
+    make_empty_dir()
     tasks = os.listdir(config.TASKS_DIR)
 
     print(f"pending {len(tasks)} jobs")
