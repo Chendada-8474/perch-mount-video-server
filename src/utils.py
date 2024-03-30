@@ -1,6 +1,7 @@
 import datetime
 import os
 import uuid
+import tqdm
 import json
 import shutil
 import pathlib
@@ -56,7 +57,7 @@ def _detect_media(media: list[dict]):
 
     objects = []
 
-    for medium in media:
+    for medium in tqdm.tqdm(media):
         hierarchy = _get_hierarchy(medium["path"])
         objects.append(
             os.path.join(
@@ -83,7 +84,10 @@ def _detect_media(media: list[dict]):
 
 
 def delete_run():
-    tasks = os.listdir("./tasks")
+    tasks = os.listdir(config.TASKS_DIR)
+
+    print(f"pending {len(tasks)} jobs")
+
     stop_at = datetime.datetime.now() + datetime.timedelta(hours=DETECTE_RUN_DURATION)
     count = 0
     for file_name in tasks:
