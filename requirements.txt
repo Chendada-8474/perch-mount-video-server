@@ -13,6 +13,7 @@ MarkupSafe==2.1.5
 minio==7.2.5
 pycparser==2.21
 pycryptodome==3.20.0
+tqdm==4.66.2
 typing_extensions==4.10.0
 urllib3==2.2.1
 Werkzeug==3.0.1
