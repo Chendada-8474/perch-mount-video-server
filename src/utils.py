@@ -21,7 +21,7 @@ class Hierarchy:
         self._get_hierarchy(path)
 
     def _get_hierarchy(self, path: str) -> dict:
-        hierarchy = str(pathlib(path)).split("\\")
+        hierarchy = str(pathlib.Path(path)).split("\\")
         self.project = hierarchy[-4]
         self.perch_mount_name = hierarchy[-3]
         self.check_date = hierarchy[-2]
@@ -42,6 +42,12 @@ def save_data_as_json(data):
         json.dump(data, f, indent=4)
 
 
+def read_task(path: str) -> dict:
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+
 def _get_hierarchy(path: str) -> Hierarchy:
     return Hierarchy(path)
 
@@ -54,7 +60,6 @@ def _detect_media(media: list[dict]):
         hierarchy = _get_hierarchy(medium["path"])
         objects.append(
             os.path.join(
-                config.MINIO_BUCKET,
                 hierarchy.project,
                 hierarchy.perch_mount_name,
                 hierarchy.check_date,
@@ -72,18 +77,21 @@ def _detect_media(media: list[dict]):
         except Exception as e:
             logging.error(e)
     try:
-        client.remove_objects(objects)
+        client.remove_objects(config.MINIO_BUCKET, objects)
     except Exception as e:
         logging.error(e)
 
 
-def detect_run():
+def delete_run():
     tasks = os.listdir("./tasks")
     stop_at = datetime.datetime.now() + datetime.timedelta(hours=DETECTE_RUN_DURATION)
     count = 0
-    for task in tasks:
+    for file_name in tasks:
+        task_path = os.path.join(config.TASKS_DIR, file_name)
+        task = read_task(task_path)
         _detect_media(task)
         count += 1
+        shutil.move(task_path, os.path.join(config.DONE_TASKS_DIR, file_name))
         if datetime.datetime.now() > stop_at:
             break
     return count
