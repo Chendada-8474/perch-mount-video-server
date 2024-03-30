@@ -11,7 +11,7 @@ from src import config
 
 
 DETECTE_RUN_DURATION = 2
-TODAY = datetime.datetime.now().strftime("YYYY-MM-DD")
+TODAY = datetime.datetime.now().strftime("%Y-%m-%d")
 
 
 class Hierarchy:
